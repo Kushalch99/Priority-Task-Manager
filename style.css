@@ -1,0 +1,10 @@
+#taskform div {
+ display: flex;  
+ padding: 5px; 
+}
+label {
+    padding-right: 5px;
+}
+#taskform {
+    display: none;
+}

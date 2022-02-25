@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Priority Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <!-- Initial display -->
+    <button id="newTask">Add a new Task</button>
+    <select name="Type" id="typeForPri">
+        <option value="work">Work</option>
+        <option value="personal">Personal</option>
+    </select>
+    <button id="showNextTask">Show the next Priority Task</button>
+
+    <!-- Highest Priority Task Display -->
+    <div id="highestPriTask">
+    </div>
+
+    <!-- New task form  -->
+    <form id="taskform">
+        <div>
+            <label for="tname">Task Name : </label>
+            <input type="text" name="Task Name" id="tname"/>
+        </div>
+        <div>
+            <label for="ttype">Task Type : </label>
+            <select name="Type" id="ttype">
+                <option value="work">Work</option>
+                <option value="personal">Personal</option>
+            </select>
+        </div>
+        <div>
+            <label for="tpri">Task Priority(1 being highest Priority) : </label>
+            <select name="Priority" id="tpri">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <div>
+            <label for="ttime">Task Deadline : </label>
+            <input type="datetime-local" id="ttime"/>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+<script type="module" src="./index.js"></script>
+</html>
