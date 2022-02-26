@@ -23,6 +23,9 @@
 
     <!-- New task form  -->
     <form id="taskform">
+        <div id="taskId">
+            <input id="id" type="text" disabled />
+        </div>
         <div>
             <label for="tname">Task Name : </label>
             <input type="text" name="Task Name" id="tname"/>
@@ -48,7 +51,7 @@
             <label for="ttime">Task Deadline : </label>
             <input type="datetime-local" id="ttime"/>
         </div>
-        <button type="submit">Submit</button>
+        <button id="submit" type="submit">Submit</button>
     </form>
 </body>
 <script type="module" src="./index.js"></script>
