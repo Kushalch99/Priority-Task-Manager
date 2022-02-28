@@ -137,8 +137,7 @@ submitBtn.onclick = (event) =>{
     event.preventDefault()
     let id = idEle.value
     let task
-    console.log(id)
-    if(id == null){
+    if(id == ''){
         console.log("here")
         task = new Task(nameEle.value, typeEle.value, parseInt(priEle.value), new Date(deadlineEle.value));
     }else{
