@@ -13,6 +13,7 @@ class Task {
         this.priority = priority;
         this.deadline = deadline;
         this.id = this.getTaskId();
+        Task.taskCount++
     }
     getTaskId() {
         return "taskId:" + Task.taskCount.toString();
@@ -40,14 +41,17 @@ class PriorityQueue {
             if(this.items[i].priority == item.priority && this.isBefore(this.items[i].deadline, item.deadline))
                 continue
             this.items.splice(i, 0, item)
-            break
+            return
         }
+        this.items.push(item)
         return
     }
     deque(){
         if(this.isEmpty())
             return null
-        return this.items.shift()
+        let taskId = this.items[0].id
+        this.items.shift()
+        return taskId
     }
     front(){
         if(this.isEmpty())
@@ -74,13 +78,13 @@ class TaskManager {
     add(task){
         if(task.type === constants.WORK){
             this.workQueue.enque(task)
-            localStorage.setItem(constants.WORK, JSON.stringify(this.workQueue))
+            this.setLocalStorage(constants.WORK, this.workQueue)
         }else{
             this.personalQueue.enque(task)
-            localStorage.setItem(constants.PERSONAL, JSON.stringify(this.personalQueue))
+            this.setLocalStorage(constants.PERSONAL, this.personalQueue)
         }
         this.taskMap[task.id] = task
-        localStorage.setItem(constants.TASK_MAP, JSON.stringify(this.taskMap))
+        this.setLocalStorage(constants.TASK_MAP, this.taskMap)
     }
     getTask(taskId){
         return this.taskMap[taskId]
@@ -92,12 +96,20 @@ class TaskManager {
             return this.personalQueue.front()
         }
     }
+    setLocalStorage(key, value){
+        localStorage.setItem(key, JSON.stringify(value))
+    }
     completeTask(type){
+        let taskId
         if(type === constants.WORK){
-            return this.workQueue.deque()
+            taskId = this.workQueue.deque()
+            this.setLocalStorage(constants.WORK, this.workQueue)
         }else{
-            return this.personalQueue.deque()
+            taskId = this.personalQueue.deque()
+            this.setLocalStorage(constants.PERSONAL, this.personalQueue)
         }
+        delete this.taskMap[taskId]
+        this.setLocalStorage(constants.TASK_MAP, this.taskMap)
     }
 }
 
@@ -138,7 +150,6 @@ submitBtn.onclick = (event) =>{
     let id = idEle.value
     let task
     if(id == ''){
-        console.log("here")
         task = new Task(nameEle.value, typeEle.value, parseInt(priEle.value), new Date(deadlineEle.value));
     }else{
         task = taskManager.getTask(id)
@@ -159,35 +170,39 @@ newTaskBtn.onclick = () => {
 }
 
 showNextTaskBtn.onclick = () => {
-    highestPriTaskDiv.innerHTML = ''
-    let task = taskManager.getHighestPriTask(taskTypeForPriEle.value)
-    let heading = document.createElement('h4')
-    let type = document.createElement('p')
-    let priority = document.createElement('h5')
-    let deadline = document.createElement('p')
-    let taskCompletedBtn = document.createElement('button')
-    let editTaskBtn = document.createElement('button')
-    taskCompletedBtn.innerText = 'Task Completed'
-    editTaskBtn.innerText = 'Edit Task'
-    heading.innerText = 'TASK: ' + task.name
-    type.innerText = 'TYPE: ' + task.type
-    priority.innerText = 'Priority : ' + task.priority
-    deadline.innerText = 'Deadline :' + task.deadline
-    taskCompletedBtn.onclick = () => {
-        taskManager.completeTask(task.type)
-        hideElement(highestPriTaskDiv)
+    try{
+        highestPriTaskDiv.innerHTML = ''
+        let task = taskManager.getHighestPriTask(taskTypeForPriEle.value)
+        let heading = document.createElement('h4')
+        let type = document.createElement('p')
+        let priority = document.createElement('h5')
+        let deadline = document.createElement('p')
+        let taskCompletedBtn = document.createElement('button')
+        let editTaskBtn = document.createElement('button')
+        taskCompletedBtn.innerText = 'Task Completed'
+        editTaskBtn.innerText = 'Edit Task'
+        heading.innerText = 'TASK: ' + task.name
+        type.innerText = 'TYPE: ' + task.type
+        priority.innerText = 'Priority : ' + task.priority
+        deadline.innerText = 'Deadline :' + task.deadline
+        taskCompletedBtn.onclick = () => {
+            taskManager.completeTask(task.type)
+            hideElement(highestPriTaskDiv)
+        }
+        editTaskBtn.onclick = () => {
+            populateForm(task.id)
+            hideElement(highestPriTaskDiv)
+        }
+        highestPriTaskDiv.appendChild(heading)
+        highestPriTaskDiv.appendChild(type)
+        highestPriTaskDiv.appendChild(priority)
+        highestPriTaskDiv.appendChild(deadline)
+        highestPriTaskDiv.appendChild(taskCompletedBtn)
+        highestPriTaskDiv.appendChild(editTaskBtn)
+        showElement(highestPriTaskDiv)
+    }catch(err){
+        alert(err)
     }
-    editTaskBtn.onclick = () => {
-        populateForm(task.id)
-        hideElement(highestPriTaskDiv)
-    }
-    highestPriTaskDiv.appendChild(heading)
-    highestPriTaskDiv.appendChild(type)
-    highestPriTaskDiv.appendChild(priority)
-    highestPriTaskDiv.appendChild(deadline)
-    highestPriTaskDiv.appendChild(taskCompletedBtn)
-    highestPriTaskDiv.appendChild(editTaskBtn)
-    showElement(highestPriTaskDiv)
 }
 
 function hideElement(ele){
